@@ -37,6 +37,8 @@
         <br/>
         RSS : <input type="url" id="RSS"/>
         <br/>
+        RSSのタイトル要素 : <input type="text" id="RSS_title"/>
+        <br/>
         アンチエイリアス : <input type="checkbox" id="AE"/>
         <br/>
         <input type="button" value="保存" onclick="save()"/>
@@ -46,12 +48,14 @@
                 console.log(settings.port);
                 document.getElementById('PORT').value = settings.port;
                 document.getElementById('RSS').value = settings.rss;
+                document.getElementById('RSS_title').value = settings.rss_title_element;
             }
 
             async function save() {
                 await window.terrescot_api.setting({
                     port: new Number(document.getElementById('PORT').value),
-                    rss: document.getElementById('RSS').value
+                    rss: document.getElementById('RSS').value,
+                    rss_title_element: document.getElementById('RSS_title').value
                 });
             };
         </script>

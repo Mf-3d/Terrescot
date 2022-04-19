@@ -5,6 +5,15 @@ const nodeStatic = require('node-static'); // サーバー起動
 const { title } = require("process");
 const RssParser = require('rss-parser');
 
+// Sleep
+const sleep = (time) => {
+  return new Promise((resolve, reject) => {
+      setTimeout(() => {
+          resolve()
+      }, time)
+  })
+}
+
 // 設定ファイル
 const store = new Store({
   name: 'config'
@@ -23,6 +32,8 @@ console.debug(store.get('config.port'))
 var PORT = store.get('config.port') || 1212;
 // RSS設定
 var RSS = store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss'; // なぜかデフォルトはZIP氏のツイート
+// RSSのタイトル要素を設定
+var rss_title_element = store.get('config.rss_elements.title') || 'contentSnippet';
 var rss_title;
 
 // localhostサーバーの作成
@@ -69,16 +80,13 @@ function nw(){
     console.debug(PORT);
     store.set('config.port', PORT);
     store.set('config.rss', RSS);
+    store.set('config.rss_elements.title', rss_title_element);
     win = null;
     win_visible = false;
   });
 
-  // win.on("focus", () => {
-  //   win.setSkipTaskbar(true);
-  // });
-  // win.on("blur", () => {
-  //   win.setSkipTaskbar(true);
-  // });
+  // 一応起動時に取得
+  get_rss();
 };
 
 // 設定ウィンドウ生成
@@ -153,31 +161,33 @@ electron.ipcMain.handle('setting', (event, data) => {
   if(data !== undefined){
     store.set('config.port',data.port);
     store.set('config.rss',data.rss);
+    store.set('config.rss_elements.title',data.rss_title_element);
     // 終了時にポートが戻されないように
     PORT = data.port;
     RSS = data.rss;
+    rss_title_element = data.rss_title_element;
     console.debug(data);
   }
   // 設定を読み込むとき
   else{
     return {
       port: store.get('config.port') || 1212,
-      rss: store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss'
+      rss: store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss',
+      rss_title_element: store.get('config.rss_elements.title')
     }
   }
 });
 
 // RSS
 electron.ipcMain.handle('get_rss', async (event, data) => {
+  get_rss();
   return rss_title;
 });
 
 function get_rss(){
   const rssParser = new RssParser();
   rssParser.parseURL(RSS, (err, feed) => {
-    console.log('RSS 取得成功', feed.items[0].contentSnippet);
-    rss_title = feed.items[0].contentSnippet;
+    console.log('RSS 取得成功', feed.items[0][rss_title_element]);
+    rss_title = feed.items[0][rss_title_element];
   });
 }
-
-get_rss();
