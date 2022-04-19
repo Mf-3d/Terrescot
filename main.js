@@ -4,7 +4,7 @@ const Store = require('electron-store');
 const express = require("express");
 // const nodeStatic = require('node-static'); // サーバー起動
 const RssParser = require('rss-parser');
-
+const fs = require('fs');
 
 // Sleep
 const sleep = (time) => {
@@ -47,11 +47,13 @@ server = app.listen(PORT, function(){
 // node-staticのかわり
 app.use(express.static('src'));
 
-app.post('/api/', (req, res, next) => {
+// 独自のAPIを計画中
+app.post('/soleil_api/', (req, res, next) => {
   var result = {
     "name": "terrescot",
     "api": "soleil_api",
-    "api_version": "0.0.1"
+    "api_version": "0.0.1",
+    "result": {}
   }
   res.header('Content-Type', 'application/json; charset=utf-8');
   res.send(result);
