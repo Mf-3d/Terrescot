@@ -1,9 +1,10 @@
 // モジュール読み込み
 const electron = require("electron");
 const Store = require('electron-store');
-const nodeStatic = require('node-static'); // サーバー起動
-const { title } = require("process");
+const express = require("express");
+// const nodeStatic = require('node-static'); // サーバー起動
 const RssParser = require('rss-parser');
+
 
 // Sleep
 const sleep = (time) => {
@@ -38,13 +39,31 @@ var rss_title;
 
 // localhostサーバーの作成
 
-var file = new nodeStatic.Server(__dirname + '/src');
+const app = express();
+server = app.listen(PORT, function(){
+  console.log("Node.js is listening to PORT:" + server.address().port);
+});
 
-require('http').createServer(function (request, response) {
-  request.addListener('end', function () {
-      file.serve(request, response);
-  }).resume();
-}).listen(PORT); // デフォルトのポートは1212、Xascotと被らないように。
+// node-staticのかわり
+app.use(express.static('src'));
+
+app.post('/api/', (req, res, next) => {
+  var result = {
+    "name": "terrescot",
+    "api": "soleil_api",
+    "api_version": "0.0.1"
+  }
+  res.header('Content-Type', 'application/json; charset=utf-8');
+  res.send(result);
+});
+
+// var file = new nodeStatic.Server(__dirname + '/src');
+
+// require('http').createServer(function (request, response) {
+//   request.addListener('end', function () {
+//       file.serve(request, response);
+//   }).resume();
+// }).listen(PORT); // デフォルトのポートは1212、Xascotと被らないように。
 
 // 多重起動防止用
 const gotTheLock = electron.app.requestSingleInstanceLock();
