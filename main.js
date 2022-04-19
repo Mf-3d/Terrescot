@@ -2,7 +2,6 @@
 const electron = require("electron");
 const Store = require('electron-store');
 const nodeStatic = require('node-static'); // サーバー起動
-const cheerio = require('cheerio-httpcli'); // RSS取得
 // 設定ファイル
 const store = new Store({
   name: 'config'
