@@ -2,6 +2,9 @@
 const electron = require("electron");
 const Store = require('electron-store');
 const nodeStatic = require('node-static'); // サーバー起動
+const { title } = require("process");
+const RssParser = require('rss-parser');
+
 // 設定ファイル
 const store = new Store({
   name: 'config'
@@ -18,6 +21,9 @@ let swin_visible = false;
 console.debug(store.get('config.port'))
 // ポート設定
 var PORT = store.get('config.port') || 1212;
+// RSS設定
+var RSS = store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss'; // なぜかデフォルトはZIP氏のツイート
+var rss_title;
 
 // localhostサーバーの作成
 
@@ -32,7 +38,7 @@ require('http').createServer(function (request, response) {
 // 多重起動防止用
 const gotTheLock = electron.app.requestSingleInstanceLock();
 if (!gotTheLock) {
-  app.quit();
+  electron.app.quit();
 }
 
 // メインウィンドウ生成
@@ -62,6 +68,7 @@ function nw(){
   win.on('closed', function() {
     console.debug(PORT);
     store.set('config.port', PORT);
+    store.set('config.rss', RSS);
     win = null;
     win_visible = false;
   });
@@ -145,14 +152,32 @@ electron.ipcMain.handle('setting', (event, data) => {
   // 設定を保存するとき
   if(data !== undefined){
     store.set('config.port',data.port);
+    store.set('config.rss',data.rss);
     // 終了時にポートが戻されないように
     PORT = data.port;
+    RSS = data.rss;
     console.debug(data);
   }
   // 設定を読み込むとき
   else{
     return {
-      port: store.get('config.port') || 1212
+      port: store.get('config.port') || 1212,
+      rss: store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss'
     }
   }
 });
+
+// RSS
+electron.ipcMain.handle('get_rss', async (event, data) => {
+  return rss_title;
+});
+
+function get_rss(){
+  const rssParser = new RssParser();
+  rssParser.parseURL(RSS, (err, feed) => {
+    console.log('RSS 取得成功', feed.items[0].contentSnippet);
+    rss_title = feed.items[0].contentSnippet;
+  });
+}
+
+get_rss();

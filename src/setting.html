@@ -35,6 +35,9 @@
         <h1>設定</h1>
         ポート : <input type="number" max="65535" min="0" id="PORT"/>
         <br/>
+        RSS : <input type="url" id="RSS"/>
+        <br/>
+        アンチエイリアス : <input type="checkbox" id="AE"/>
         <br/>
         <input type="button" value="保存" onclick="save()"/>
         <script>
@@ -42,13 +45,14 @@
                 var settings = await window.terrescot_api.setting();
                 console.log(settings.port);
                 document.getElementById('PORT').value = settings.port;
+                document.getElementById('RSS').value = settings.rss;
             }
 
             async function save() {
                 await window.terrescot_api.setting({
-                    port: new Number(document.getElementById('PORT').value)
+                    port: new Number(document.getElementById('PORT').value),
+                    rss: document.getElementById('RSS').value
                 });
-                console.log('(゜-゜)');
             };
         </script>
     </body>

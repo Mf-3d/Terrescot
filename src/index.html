@@ -70,7 +70,7 @@
             &nbsp;&nbsp;&nbsp;
             <a href="javascript:toggleModelVisiblity()"><div class="circle3" style="background: #fffc67;"></div></a>
             <a href="javascript:toggleSettingVisiblity()"><div class="circle3" style="background: #ff6767;"></div></a>
-            <a href="javascript:void(0)"><div class="circle3"></div></a>
+            <a href="javascript:read_rss()"><div class="circle3"></div></a>
             <a href="javascript:void(0)"><div class="circle3" style="background: #80ff67;-webkit-app-region: drag;"></div></a>
         </footer>
         <script src="./js/main.js"></script>
@@ -134,6 +134,14 @@
                     // 表示するか否か デフォルトは切替え
                     // visible: true
                 });
+            }
+
+            async function read_rss() {
+                var speechSet = new SpeechSynthesisUtterance();
+                speechSet.text = await window.terrescot_api.get_rss();
+                speechSet.lang = 'ja-JP';
+                speechSynthesis.speak(speechSet);
+                console.log(await window.terrescot_api.get_rss());
             }
 
             // const text     = document.querySelector('#chattext');
