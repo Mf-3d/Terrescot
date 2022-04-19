@@ -41,20 +41,18 @@ window.onload = () => {
 Init = () => {
   scene = new THREE.Scene();
   renderer = new THREE.WebGLRenderer({ 
-    alpha: true
+    alpha: true,
+    antialias: true
   });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth - 60, window.innerHeight - 120);
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   // documentにMMDをセットする
   document.getElementById('three_canvas').appendChild(renderer.domElement);
-  scene.add( new THREE.AmbientLight( 0xffffff, 0.6 ) );
-  // ライト(平行光源)を作成
-  // (Constructor)  DirectionalLight( color : Integer, intensity : Float ) : Object3D -> Light
+  ambientLight = new THREE.AmbientLight( 0xffffff, 0.6 );
+  ambientLight.castShadow = true;
+  scene.add( ambientLight );
   light = new THREE.DirectionalLight( 0xffe2b9, 0.4 );
-  // ライト(平行光源)による動的シャドウを描画の設定
-  // (Property) .castShadow : Boolean
   light.castShadow = true;
   // ライトの位置を設定
   // (Property) .position : Vector3
@@ -64,33 +62,16 @@ Init = () => {
   // (Property) .shadow : SpotLightShadow
   // (Property) .mapSize : Vector2
   light.shadow.mapSize.copy( new THREE.Vector2 ( 2 ** 10, 2 ** 10 ) );
-  // ライト(スポットライト光源)によるシャドウの解像度
-  // (Property) .shadow : SpotLightShadow
-  // (Property) .focus : Number
   light.shadow.focus = 1;
-  // Shadow Mapのoffsetバイアスの設定、Shadow Acneを減らすことができる。
-  // (Property) .normalBias : Float
   light.shadow.normalBias = 0.02;
-  // Shadow Mapのバイアスの設定、影の中にできるArtefactsを減らすことができる。
-  // (Property) .bias : Float
   light.shadow.bias = -0.0005;
-  // 平行光源の設定
-  // (Property) .shadow : SpotLightShadow
-  // (Property) .camera : Camera
-  // (Property) .left : Float
   light.shadow.camera.left = -5;
-  // (Property) .right : Float
   light.shadow.camera.right = 5;
-  // (Property) .top : Float
   light.shadow.camera.top = 5;
-  // (Property) .bottom : Float
   light.shadow.camera.bottom = -5;
   // (Property) .near : Float
   light.shadow.camera.near = 0.1;
-  // (Property) .far : Float
   light.shadow.camera.far = 20;
-  // ライト(平行光源)をシーンに追加
-  // (Method) .add ( object : Object3D, ... ) : this
   scene.add( light );
   //light.target.position.copy( new THREE.Vector3( 0, 0, 0 ) );
   // 平行光源のターゲットをシーンに追加

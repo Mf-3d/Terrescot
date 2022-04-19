@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cheerio-httpcli": "^0.8.3",
     "electron": "^18.0.3",
     "electron-store": "^8.0.1",
     "node-static": "^0.7.11"

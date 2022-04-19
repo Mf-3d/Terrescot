@@ -69,7 +69,7 @@
             <br>
             &nbsp;&nbsp;&nbsp;
             <a href="javascript:toggleModelVisiblity()"><div class="circle3" style="background: #fffc67;"></div></a>
-            <a href="javascript:void(0)"><div class="circle3" style="background: #ff6767;"></div></a>
+            <a href="javascript:toggleSettingVisiblity()"><div class="circle3" style="background: #ff6767;"></div></a>
             <a href="javascript:void(0)"><div class="circle3"></div></a>
             <a href="javascript:void(0)"><div class="circle3" style="background: #80ff67;-webkit-app-region: drag;"></div></a>
         </footer>
@@ -127,6 +127,13 @@
                     document.getElementById("three_canvas").style.visibility = "visible";
                     document.getElementById("visible_btn").innerHTML = "MMDモデル非表示"
                 }
+            }
+
+            function toggleSettingVisiblity() {
+                window.terrescot_api.toggle_settingvisiblity({
+                    // 表示するか否か デフォルトは切替え
+                    // visible: true
+                });
             }
 
             // const text     = document.querySelector('#chattext');
