@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx electron ."
+    "start": "npx electron .",
+    "preinstall": "npx npm-force-resolutions"
   },
   "keywords": [],
   "author": "",
