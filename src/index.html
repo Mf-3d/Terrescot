@@ -72,7 +72,7 @@
             <a href="javascript:toggleModelVisiblity()"><div class="circle3" style="background: #fffc67;"></div></a>
             <a href="javascript:toggleSettingVisiblity()"><div class="circle3" style="background: #ff6767;"></div></a>
             <a href="javascript:read_rss()"><div class="circle3"></div></a>
-            <a href="javascript:void(0)"><div class="circle3" style="background: #80ff67;-webkit-app-region: drag;"></div></a>
+            <a href="javascript:void(0)" id="void_button"><div class="circle3" style="background: #80ff67;-webkit-app-region: drag;"></div></a>
         </footer>
         <script src="./js/main.js"></script>
         <script>
@@ -140,6 +140,16 @@
             window.terrescot_api.on('read_rss', (event, data)=>{
                 read_rss();
             });
+
+            window.terrescot_api.on('alerm', (event, data)=>{ 
+                alerm();
+            });
+
+            function alerm() {
+                const alerm = new Audio('audio/alerm.mp3');
+                alerm.play();
+                document.getElementById('void_button').click();
+            }
 
             async function read_rss() {
                 var speechSet = new SpeechSynthesisUtterance();

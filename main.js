@@ -5,6 +5,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const RssParser = require('rss-parser');
 const fs = require('fs');
+const schedule = require('node-schedule'); // 定期実行
 
 // Sleep
 const sleep = (time) => {
@@ -128,6 +129,24 @@ app.post('/soleil_api/run_function/', (req, res) => {
       res.send(result);
     }
   }
+  // アニメーションを切り替え
+  else if(req.body.function == 'animation'){
+    win.webContents.send('animation', {
+      animation: req.body.animation || 1
+    });
+    var result = {
+      "name": "terrescot",
+      "api": "soleil_api",
+      "api_version": "0.0.1",
+      "result": {
+        "status": 200,
+        "message": "Success!"
+      },
+      "order_content": req.body
+    }
+    res.header('Content-Type', 'application/json; charset=utf-8');
+    res.send(result);
+  }
 });
 
 // var file = new nodeStatic.Server(__dirname + '/src');
@@ -146,6 +165,9 @@ if (!gotTheLock) {
 
 // メインウィンドウ生成
 function nw(){
+  // 自動で音声を再生することを許可
+  // ここはいじらないで
+  electron.app.commandLine.appendSwitch('--autoplay-policy','no-user-gesture-required');
   win = new electron.BrowserWindow({
     resizable: false,
     hasShadow:  false,
@@ -187,7 +209,7 @@ function setting_nw() {
   swin = new electron.BrowserWindow({
     resizable: true,
     hasShadow:  true,
-    width: 300,
+    width: 500,
     height: 300,
     transparent: false,
     frame: true,
@@ -289,3 +311,15 @@ function get_rss(){
     rss_title = feed.items[0][rss_title_element];
   });
 }
+
+var alerm_job_1 = schedule.scheduleJob({
+  minute:  00
+}, function () {
+  win.webContents.send('alerm', {});
+});
+
+var alerm_job_2 = schedule.scheduleJob({
+  minute:  30
+}, function () {
+  win.webContents.send('alerm', {});
+});

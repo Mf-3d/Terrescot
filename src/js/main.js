@@ -19,8 +19,7 @@ const clock = new THREE.Clock();
 
 
 const MotionObjects = [
-  { id: "loop", VmdClip: null, AudioClip: false },
-  // { id: "kei_voice_009_1", VmdClip: null, AudioClip: true },
+  { id: "loop", VmdClip: null, AudioClip: false }
   // { id: "kei_voice_010_2", VmdClip: null, AudioClip: true },
 ];
 
@@ -50,7 +49,6 @@ Init = () => {
   // documentにMMDをセットする
   document.getElementById('three_canvas').appendChild(renderer.domElement);
   ambientLight = new THREE.AmbientLight( 0xffffff, 0.6 );
-  ambientLight.castShadow = true;
   scene.add( ambientLight );
   light = new THREE.DirectionalLight( 0xffe2b9, 0.4 );
   light.castShadow = true;
@@ -252,15 +250,16 @@ function Render () {
  */
 PoseClickEvent = (id) => {
   switch (id) {
-    case "pose1":
+    case 0:
       VmdControl("loop", true);
       break;
 
-    // case "pose2":
-    //   VmdControl("kei_voice_009_1", false);
+    // 朝起動したとき、朝になったとき
+    // case 1:
+    //   VmdControl("morning", false);
     //   break;
 
-    // case "pose3":
+    // case 2:
     //   VmdControl("kei_voice_010_2", false);
     //   break;
 
@@ -269,3 +268,7 @@ PoseClickEvent = (id) => {
       break;
   }
 }
+
+// window.terrescot_api.on('animation', (event, data)=>{
+//   PoseClickEvent(data.animation);
+// });
