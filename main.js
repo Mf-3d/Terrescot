@@ -29,16 +29,19 @@ let swin;
 let win_visible = false;
 let swin_visible = false;
 
+// アンチエイリアスの変数
+let antialiasing = store.get('config.antialiasing', true);
+
 // API権限設定
 var api = {
-  read_rss: store.get('config.api.read_rss') || false
+  read_rss: store.get('config.api.read_rss',false)
 };
 // ポート設定
-var PORT = store.get('config.port') || 1212;
+var PORT = store.get('config.port',1212);
 // RSS設定
-var RSS = store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss'; // なぜかデフォルトはZIP氏のツイート
+var RSS = store.get('config.rss','https://nitter.net/ZIP_Muryobochi/rss'); // なぜかデフォルトはZIP氏のツイート
 // RSSのタイトル要素を設定
-var rss_title_element = store.get('config.rss_elements.title') || 'contentSnippet';
+var rss_title_element = store.get('config.rss_elements.title','title');
 var rss_title;
 
 // localhostサーバーの作成
@@ -134,6 +137,21 @@ app.post('/soleil_api/run_function/', (req, res) => {
     win.webContents.send('animation', {
       animation: req.body.animation || 1
     });
+    var result = {
+      "name": "terrescot",
+      "api": "soleil_api",
+      "api_version": "0.0.1",
+      "result": {
+        "status": 200,
+        "message": "Success!"
+      },
+      "order_content": req.body
+    }
+    res.header('Content-Type', 'application/json; charset=utf-8');
+    res.send(result);
+  }
+  else if(req.body.function == 'alerm'){
+    win.webContents.send('alerm', {});
     var result = {
       "name": "terrescot",
       "api": "soleil_api",
@@ -278,7 +296,9 @@ electron.ipcMain.handle('setting', (event, data) => {
     store.set('config.rss',data.rss);
     store.set('config.rss_elements.title',data.rss_title_element);
     store.set('config.api.read_rss',data.api.read_rss);
+    store.set('config.antialiasing',data.antialiasing);
     // 終了時に設定が戻されないように
+    antialiasing = data.antialiasing;
     PORT = data.port;
     RSS = data.rss;
     rss_title_element = data.rss_title_element;
@@ -287,13 +307,15 @@ electron.ipcMain.handle('setting', (event, data) => {
   }
   // 設定を読み込むとき
   else{
+    console.debug(antialiasing);
     return {
       port: store.get('config.port') || 1212,
       rss: store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss',
       rss_title_element: store.get('config.rss_elements.title') || 'title',
       api: {
         read_rss: store.get('config.api.read_rss') || false
-      }
+      },
+      antialiasing: store.get('config.antialiasing') || antialiasing
     }
   }
 });
@@ -312,6 +334,9 @@ function get_rss(){
   });
 }
 
+// -----------------------------
+// アラーム設定
+// -----------------------------
 var alerm_job_1 = schedule.scheduleJob({
   minute:  00
 }, function () {

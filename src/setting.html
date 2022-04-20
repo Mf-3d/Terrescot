@@ -41,7 +41,10 @@
         <br/>
         RSSのタイトル要素 : <input type="text" id="RSS_title"/>
         <br/>
+        <!-- アラーム : <input type="checkbox" id="alerm"/> -->
+        <br/>
         アンチエイリアス : <input type="checkbox" id="AE"/>
+        <!-- Antialiasing -->
         <br/>
         <h2>API権限</h2>
         RSS読み上げ : <input type="checkbox" id="api.read_rss"/>
@@ -55,6 +58,7 @@
                 document.getElementById('RSS').value = settings.rss;
                 document.getElementById('RSS_title').value = settings.rss_title_element;
                 document.getElementById('api.read_rss').checked = settings.api.read_rss;
+                document.getElementById('AE').checked = settings.antialiasing;
             }
 
             async function save() {
@@ -62,6 +66,7 @@
                     port: new Number(document.getElementById('PORT').value),
                     rss: document.getElementById('RSS').value,
                     rss_title_element: document.getElementById('RSS_title').value,
+                    antialiasing: document.getElementById('AE').checked,
                     api: {
                         read_rss: document.getElementById('api.read_rss').checked
                     }

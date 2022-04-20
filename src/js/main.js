@@ -1,6 +1,7 @@
 var Pmx = '';
-
+var settings = '';
 async function setPmx (func) {
+  settings = await window.terrescot_api.setting();
   Pmx = '/model/model.pmx';
   console.log(Pmx);
   func();
@@ -37,11 +38,11 @@ window.onload = () => {
  * Initialize Three
  * camera and right
  */
-Init = () => {
+Init = async () => {
   scene = new THREE.Scene();
   renderer = new THREE.WebGLRenderer({ 
     alpha: true,
-    antialias: true
+    antialias: settings.antialiasing
   });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth - 60, window.innerHeight - 120);
