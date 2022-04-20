@@ -5,7 +5,7 @@ const {platform,homedir} = require("os");
 const fs = require('fs');
 
 // ポートを調べてくる
-var config_path = path.join(homedir(), "AppData", "Roaming", "terrescot", "config.json");
+var config_path;
 switch (platform()) {
     case "win32":
         config_path = path.join(homedir(), "AppData", "Roaming", "terrescot", "config.json");
@@ -17,6 +17,7 @@ switch (platform()) {
         config_path = path.join(homedir(), ".config", "terrescot", "config.json");
         break; 
 }
+
 var config = JSON.parse(fs.readFileSync(config_path, {encoding: 'utf-8'}));
 var URL = `http://localhost:${config.config.port}/soleil_api/run_function`; // 自分の使っているポートを指定
 

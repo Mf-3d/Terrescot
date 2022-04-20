@@ -83,6 +83,7 @@ app.use('/soleil_api/run_function/', express.json());
 app.post('/soleil_api/run_function/', (req, res) => {
   if(req.body.function == 'read_rss'){
     try{
+      // RSS読み上げが許可されているか
       if(api.read_rss === true){
         get_rss();
         win.webContents.send('read_rss', rss_title);
@@ -112,6 +113,7 @@ app.post('/soleil_api/run_function/', (req, res) => {
         res.send(result);
       }
     }
+    // 関数実行が失敗したとき
     catch(e){
       var result = {
         "name": "terrescot",
