@@ -41,6 +41,9 @@
         <br/>
         アンチエイリアス : <input type="checkbox" id="AE"/>
         <br/>
+        <h2>API権限</h2>
+        RSS読み上げ : <input type="checkbox" id="api.read_rss"/>
+        <br/>
         <input type="button" value="保存" onclick="save()"/>
         <script>
             window.onload = async () => {
@@ -49,13 +52,17 @@
                 document.getElementById('PORT').value = settings.port;
                 document.getElementById('RSS').value = settings.rss;
                 document.getElementById('RSS_title').value = settings.rss_title_element;
+                document.getElementById('api.read_rss').checked = settings.api.read_rss;
             }
 
             async function save() {
                 await window.terrescot_api.setting({
                     port: new Number(document.getElementById('PORT').value),
                     rss: document.getElementById('RSS').value,
-                    rss_title_element: document.getElementById('RSS_title').value
+                    rss_title_element: document.getElementById('RSS_title').value,
+                    api: {
+                        read_rss: document.getElementById('api.read_rss').checked
+                    }
                 });
             };
         </script>

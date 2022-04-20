@@ -136,6 +136,10 @@
                 });
             }
 
+            window.terrescot_api.on('read_rss', (event, data)=>{
+                read_rss();
+            });
+
             async function read_rss() {
                 var speechSet = new SpeechSynthesisUtterance();
                 speechSet.text = await window.terrescot_api.get_rss();

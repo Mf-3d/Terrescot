@@ -2,7 +2,7 @@
 const electron = require("electron");
 const Store = require('electron-store');
 const express = require("express");
-// const nodeStatic = require('node-static'); // サーバー起動
+const bodyParser = require('body-parser');
 const RssParser = require('rss-parser');
 const fs = require('fs');
 
@@ -28,7 +28,10 @@ let swin;
 let win_visible = false;
 let swin_visible = false;
 
-console.debug(store.get('config.port'))
+// API権限設定
+var api = {
+  read_rss: store.get('config.api.read_rss') || false
+};
 // ポート設定
 var PORT = store.get('config.port') || 1212;
 // RSS設定
@@ -38,16 +41,17 @@ var rss_title_element = store.get('config.rss_elements.title') || 'contentSnippe
 var rss_title;
 
 // localhostサーバーの作成
-
 const app = express();
+
+// node-staticのかわり
+app.use(express.static(__dirname + '/src'));
+
 server = app.listen(PORT, function(){
   console.log("Node.js is listening to PORT:" + server.address().port);
 });
 
-// node-staticのかわり
-app.use(express.static('src'));
-
 // 独自のAPIを計画中
+// POSTされたとき
 app.post('/soleil_api/', (req, res, next) => {
   var result = {
     "name": "terrescot",
@@ -57,6 +61,71 @@ app.post('/soleil_api/', (req, res, next) => {
   }
   res.header('Content-Type', 'application/json; charset=utf-8');
   res.send(result);
+});
+
+// GETされたとき
+app.get('/soleil_api/', (req, res, next) => {
+  var result = {
+    "name": "terrescot",
+    "api": "soleil_api",
+    "api_version": "0.0.1",
+    "result": {
+      "status": 200,
+      "message": "Success!"
+    }
+  }
+  res.header('Content-Type', 'application/json; charset=utf-8');
+  res.send(result);
+});
+
+// 関数実行
+app.use('/soleil_api/run_function/', express.json());
+app.post('/soleil_api/run_function/', (req, res) => {
+  if(req.body.function == 'read_rss'){
+    try{
+      if(api.read_rss === true){
+        get_rss();
+        win.webContents.send('read_rss', rss_title);
+        var result = {
+          "name": "terrescot",
+          "api": "soleil_api",
+          "api_version": "0.0.1",
+          "result": {
+            "status": 200,
+            "message": "Success!"
+          }
+        }
+        res.header('Content-Type', 'application/json; charset=utf-8');
+        res.send(result);
+      }
+      else{
+        var result = {
+          "name": "terrescot",
+          "api": "soleil_api",
+          "api_version": "0.0.1",
+          "result": {
+            "status": 401,
+            "message": "This API is not allowed."
+          }
+        }
+        res.header('Content-Type', 'application/json; charset=utf-8');
+        res.send(result);
+      }
+    }
+    catch(e){
+      var result = {
+        "name": "terrescot",
+        "api": "soleil_api",
+        "api_version": "0.0.1",
+        "result": {
+          "status": 500,
+          "message": "The function could not be executed."
+        }
+      }
+      res.header('Content-Type', 'application/json; charset=utf-8');
+      res.send(result);
+    }
+  }
 });
 
 // var file = new nodeStatic.Server(__dirname + '/src');
@@ -102,6 +171,7 @@ function nw(){
     store.set('config.port', PORT);
     store.set('config.rss', RSS);
     store.set('config.rss_elements.title', rss_title_element);
+    store.set('config.api.read_rss', api.read_rss);
     win = null;
     win_visible = false;
   });
@@ -183,10 +253,12 @@ electron.ipcMain.handle('setting', (event, data) => {
     store.set('config.port',data.port);
     store.set('config.rss',data.rss);
     store.set('config.rss_elements.title',data.rss_title_element);
-    // 終了時にポートが戻されないように
+    store.set('config.api.read_rss',data.api.read_rss);
+    // 終了時に設定が戻されないように
     PORT = data.port;
     RSS = data.rss;
     rss_title_element = data.rss_title_element;
+    api.read_rss = data.api.read_rss;
     console.debug(data);
   }
   // 設定を読み込むとき
@@ -194,7 +266,10 @@ electron.ipcMain.handle('setting', (event, data) => {
     return {
       port: store.get('config.port') || 1212,
       rss: store.get('config.rss') || 'https://nitter.net/ZIP_Muryobochi/rss',
-      rss_title_element: store.get('config.rss_elements.title')
+      rss_title_element: store.get('config.rss_elements.title') || 'title',
+      api: {
+        read_rss: store.get('config.api.read_rss') || false
+      }
     }
   }
 });
