@@ -321,8 +321,8 @@ electron.ipcMain.handle('get_rss', async (event, data) => {
 function get_rss(){
   const rssParser = new RssParser();
   rssParser.parseURL(RSS, (err, feed) => {
-    console.log('RSS 取得成功', feed.item[0][rss_title_element]);
-    rss_title = feed.item[0][rss_title_element];
+    console.log('RSS 取得成功', feed.items[0][rss_title_element]);
+    rss_title = feed.items[0][rss_title_element];
   });
 }
 
