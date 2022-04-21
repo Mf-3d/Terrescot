@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const RssParser = require('rss-parser');
 const fs = require('fs');
 const schedule = require('node-schedule'); // 定期実行
-const modules = require('./js/modules');
+// const modules = require('./js/modules');
 
 // 設定ファイル
 const store = new Store({

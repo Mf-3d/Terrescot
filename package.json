@@ -1,6 +1,6 @@
 {
   "name": "terrescot",
-  "version": "1.0.0",
+  "version": "0.1.2",
   "description": "Terre.",
   "main": "main.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "start": "npx electron .",
     "preinstall": "npx npm-force-resolutions",
     "build:win": "npx electron-builder --win --x64 --dir",
+    "build:mac": "npx electron-builder --mac --x64",
     "setup": "npm install"
   },
   "author": "mf7cli",
