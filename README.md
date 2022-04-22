@@ -6,6 +6,6 @@ Xascotの派生だったり後継だったります。
 
 [Wiki](https://github.com/mf-3d/terrescot/wiki)
 
-![GitHub repo size](https://img.shields.io/github/repo-size/mf-3d/terrescot)
-
 [API操作用モジュール](https://github.com/mf-3d/terrescot-control)
+
+![GitHub repo size](https://img.shields.io/github/repo-size/mf-3d/terrescot?style=flat-square)
