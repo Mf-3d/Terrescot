@@ -17,11 +17,16 @@ const store = new Store({
 let win;
 let swin;
 let mwin;
+let test_win;
 
 // ウィンドウが開いているかの変数
 let win_visible = false;
 let swin_visible = false;
 let mwin_visible = false;
+let test_win_visible = false;
+
+// ウィンドウのサイズの変数
+let test_win_size;
 
 // アンチエイリアスの変数
 let antialiasing = store.get('config.antialiasing', true);
@@ -281,6 +286,54 @@ function memo_nw() {
   });
 }
 
+// テスト用ウィンドウ生成
+function test_nw() {
+  test_win = new electron.BrowserWindow({
+    resizable: true,
+    hasShadow:  true,
+    width: 300,
+    height: 300,
+    transparent: false,
+    frame: true,
+    toolbar: false,
+    alwaysOnTop: false,
+    icon: `${__dirname}/icon.png`,
+    webPreferences: {
+      preload: `${__dirname}/src/preload/preload.js`
+    }
+  });
+
+  test_win.webContents.loadURL(`http://localhost:${store.get(`config.port`)}/test.html`);
+  test_win.webContents.reloadIgnoringCache();
+
+  // 設定ウィンドウが起動したことを知らせる
+  test_win_visible = true;
+
+  test_win.on('ready-to-show',() => {
+    test_win_size = test_win.getSize();
+    test_win.webContents.send('win_status', {
+      test_win: {
+        width: test_win_size[0],
+        height: test_win_size[1]
+      }
+    });
+  });
+
+  test_win.on('close',() => {
+    test_win_visible = false;
+  });
+
+  test_win.on('resize', () => {
+    test_win_size = test_win.getSize();
+    test_win.webContents.send('win_status', {
+      test_win: {
+        width: test_win_size[0],
+        height: test_win_size[1]
+      }
+    });
+  });
+}
+
 // macOS以外はウィンドウをすべて閉じたらアプリを終了するように
 electron.app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -389,6 +442,29 @@ electron.ipcMain.handle('memo', (event, data) => {
     console.debug(antialiasing);
     return {
       content: store.get('config.memo.content', memo.content)
+    }
+  }
+});
+
+// テストウィンドウの起動
+electron.ipcMain.handle('toggle_test_winvisiblity', (event, data) => {
+  if(data.visible === true){
+    // 表示させたいとき
+    test_nw();
+  }
+  else if(data.visible === false){
+    // 非表示にさせたいとき
+    test_win.close();
+    test_win_visible = false;
+  }
+  else{
+    // 切替するとき
+    if(test_win_visible === false){
+      test_nw();
+    }
+    else if(test_win_visible === true){
+      test_win.close();
+      test_win_visible = false;
     }
   }
 });

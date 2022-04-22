@@ -147,11 +147,19 @@
 
             window.addEventListener("keydown", (e)=>{
                 const keycd = e.keyCode;
-                if(keycd === 77){
-                    window.terrescot_api.toggle_memovisiblity({
-                        // 表示するか否か デフォルトは切替え
-                        // visible: true
-                    });
+                if(event.shiftKey){
+                    if(keycd === 77){
+                        window.terrescot_api.toggle_memovisiblity({
+                            // 表示するか否か デフォルトは切替え
+                            // visible: true
+                        });
+                    }
+                    if(keycd === 84){
+                        window.terrescot_api.toggle_test_winvisiblity({
+                            // 表示するか否か デフォルトは切替え
+                            // visible: true
+                        });
+                    }
                 }
             });
 
