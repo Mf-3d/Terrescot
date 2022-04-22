@@ -10,27 +10,18 @@ const schedule = require('node-schedule'); // 定期実行
 
 // 設定ファイル
 const store = new Store({
-  name: 'config',
-  defaults: {
-    "port": 1212,
-		"rss": "https://nitter.net/kn4655/rss",
-		"rss_elements": {
-			"title": "title"
-		},
-		"api": {
-			"read_rss": false
-		},
-		"antialiasing": true
-  }
+  name: 'config'
 });
 
 // ウィンドウの変数
 let win;
 let swin;
+let mwin;
 
 // ウィンドウが開いているかの変数
 let win_visible = false;
 let swin_visible = false;
+let mwin_visible = false;
 
 // アンチエイリアスの変数
 let antialiasing = store.get('config.antialiasing', true);
@@ -39,13 +30,22 @@ let antialiasing = store.get('config.antialiasing', true);
 var api = {
   read_rss: store.get('config.api.read_rss',false)
 };
+
 // ポート設定
 var PORT = store.get('config.port',1212);
+
 // RSS設定
 var RSS = store.get('config.rss','https://nitter.net/ZIP_Muryobochi/rss'); // なぜかデフォルトはZIP氏のツイート
+
 // RSSのタイトル要素を設定
 var rss_title_element = store.get('config.rss_elements.title','title');
 var rss_title;
+
+// メモ帳の変数
+var memo = {
+  content: store.get('config.memo.text',''),
+  date: store.get('config.memo.date','')
+}
 
 // localhostサーバーの作成
 const app = express();
@@ -253,6 +253,34 @@ function setting_nw() {
   });
 }
 
+// メモウィンドウ生成
+function memo_nw() {
+  mwin = new electron.BrowserWindow({
+    resizable: true,
+    hasShadow:  true,
+    width: 275,
+    height: 350,
+    transparent: false,
+    frame: true,
+    toolbar: false,
+    alwaysOnTop: false,
+    icon: `${__dirname}/icon.png`,
+    webPreferences: {
+      preload: `${__dirname}/src/preload/preload.js`
+    }
+  });
+
+  mwin.webContents.loadURL(`http://localhost:${store.get(`config.port`)}/memo.html`);
+  mwin.webContents.reloadIgnoringCache();
+
+  // 設定ウィンドウが起動したことを知らせる
+  mwin_visible = true;
+
+  mwin.on('close',() => {
+    mwin_visible = false;
+  });
+}
+
 // macOS以外はウィンドウをすべて閉じたらアプリを終了するように
 electron.app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -319,6 +347,48 @@ electron.ipcMain.handle('setting', (event, data) => {
         read_rss: store.get('config.api.read_rss') || false
       },
       antialiasing: store.get('config.antialiasing') || antialiasing
+    }
+  }
+});
+
+// メモウィンドウの起動
+electron.ipcMain.handle('toggle_memovisiblity', (event, data) => {
+  if(data.visible === true){
+    // 表示させたいとき
+    memo_nw();
+  }
+  else if(data.visible === false){
+    // 非表示にさせたいとき
+    mwin.close();
+    mwin_visible = false;
+  }
+  else{
+    // 切替するとき
+    if(mwin_visible === false){
+      memo_nw();
+    }
+    else if(mwin_visible === true){
+      mwin.close();
+      mwin_visible = false;
+    }
+  }
+});
+
+// メモ読み込み、保存用
+electron.ipcMain.handle('memo', (event, data) => {
+  console.debug(data);
+  // メモを保存するとき
+  if(data !== undefined){
+    store.set('config.memo.content', data.content);
+    // 終了時にメモが戻されないように
+    memo.content = data.content;
+    console.debug(data);
+  }
+  // メモを読み込むとき
+  else{
+    console.debug(antialiasing);
+    return {
+      content: store.get('config.memo.content', memo.content)
     }
   }
 });
