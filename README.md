@@ -8,4 +8,4 @@ Xascotの派生だったり後継だったります。
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/mf-3d/terrescot)
 
-[API操作用モジュール](https://github.com/mf-3d/terrescot-api)
+[API操作用モジュール](https://github.com/mf-3d/terrescot_api)
