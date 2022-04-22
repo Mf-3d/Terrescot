@@ -10,7 +10,18 @@ const schedule = require('node-schedule'); // 定期実行
 
 // 設定ファイル
 const store = new Store({
-  name: 'config'
+  name: 'config',
+  defaults: {
+    "port": 1212,
+		"rss": "https://nitter.net/kn4655/rss",
+		"rss_elements": {
+			"title": "title"
+		},
+		"api": {
+			"read_rss": false
+		},
+		"antialiasing": true
+  }
 });
 
 // ウィンドウの変数

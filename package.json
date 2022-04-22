@@ -1,6 +1,6 @@
 {
   "name": "terrescot",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Terre.",
   "main": "main.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "start": "npx electron .",
     "preinstall": "npx npm-force-resolutions",
     "build:win": "npx electron-builder --win --x64 --dir",
+    "build:win-installer": "npx electron-builder --win --x64",
     "build:mac": "npx electron-builder --mac --x64",
     "setup": "npm install"
   },
@@ -21,7 +22,16 @@
       "src",
       "package.json",
       "package-lock.json"
-    ]
+    ],
+    "win": {
+      "icon": "src/image/logo.ico",
+      "target": "nsis",
+      "legalTrademarks": "Copyright 2022 mf7cli."
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
   "dependencies": {
     "body-parser": "^1.20.0",
