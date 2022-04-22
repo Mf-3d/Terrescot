@@ -13,17 +13,24 @@ const store = new Store({
   name: 'config'
 });
 
+// 日記ファイル
+const diary = new Store({
+  name: 'diary'
+});
+
 // ウィンドウの変数
-let win;
-let swin;
-let mwin;
-let test_win;
+let win; // メインウィンドウ
+let swin; // 設定ウィンドウ
+let mwin; // メモウィンドウ
+let test_win; // テスト用ウィンドウ
+let diary_win; // 日記ウィンドウ
 
 // ウィンドウが開いているかの変数
 let win_visible = false;
 let swin_visible = false;
 let mwin_visible = false;
 let test_win_visible = false;
+let diary_win_visible = false;
 
 // ウィンドウのサイズの変数
 let test_win_size;
@@ -52,6 +59,7 @@ var memo = {
   date: store.get('config.memo.date','')
 }
 
+var diary_data = diary.get('diary') || [];
 // localhostサーバーの作成
 const app = express();
 
@@ -334,6 +342,34 @@ function test_nw() {
   });
 }
 
+// 日記ウィンドウ生成
+function diary_nw() {
+  diary_win = new electron.BrowserWindow({
+    resizable: true,
+    hasShadow:  true,
+    width: 500,
+    height: 400,
+    transparent: false,
+    frame: true,
+    toolbar: false,
+    alwaysOnTop: false,
+    icon: `${__dirname}/icon.png`,
+    webPreferences: {
+      preload: `${__dirname}/src/preload/preload.js`
+    }
+  });
+
+  diary_win.webContents.loadURL(`http://localhost:${store.get(`config.port`)}/diary.html`);
+  diary_win.webContents.reloadIgnoringCache();
+
+  // 設定ウィンドウが起動したことを知らせる
+  diary_win_visible = true;
+
+  diary_win.on('close',() => {
+    diary_win_visible = false;
+  });
+}
+
 // macOS以外はウィンドウをすべて閉じたらアプリを終了するように
 electron.app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -466,6 +502,51 @@ electron.ipcMain.handle('toggle_test_winvisiblity', (event, data) => {
       test_win.close();
       test_win_visible = false;
     }
+  }
+});
+
+// 日記ウィンドウを起動
+electron.ipcMain.handle('toggle_diary_winvisiblity', (event, data) => {
+  if(data.visible === true){
+    // 表示させたいとき
+    diary_nw();
+  }
+  else if(data.visible === false){
+    // 非表示にさせたいとき
+    diary_win.close();
+    diary_win_visible = false;
+  }
+  else{
+    // 切替するとき
+    if(diary_win_visible === false){
+      diary_nw();
+    }
+    else if(diary_win_visible === true){
+      diary_win.close();
+      diary_win_visible = false;
+    }
+  }
+});
+// 日記読み込み、保存用
+electron.ipcMain.handle('diary', (event, data) => {
+  console.debug(data);
+  // 日記を保存するとき
+  if(data.op == 'write'){
+    diary_data.push({
+      content: data.content,
+      edited_date: data.edited_date
+    });
+    diary.set('diary', diary_data);
+    console.debug(data);
+  }
+  else if(data.op == 'delete'){
+    diary_data.splice(data.start, 1);
+    diary.set('diary', diary_data);
+    console.debug(data);
+  }
+  // 日記を読み込むとき
+  else if(data.op == 'load'){
+    return store.get('diary', diary_data);
   }
 });
 

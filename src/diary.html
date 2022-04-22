@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Terrescot Diary</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&display=swap');
+
+            body {
+                background-color: rgb(236, 236, 236);
+                font-family: 'Noto Sans JP', sans-serif;
+            }
+            input {
+                font-family: 'Noto Sans JP', sans-serif;
+                border: 0;
+            }
+            input[type=number] {
+                outline: 0;
+                border: 0;
+                border-radius: 5px;
+                height: 1.5em;
+            }
+            input[type=button] {
+                background-color: #0066ff;
+                color: white;
+                transition: all 0.5s;
+            }
+
+            input[type=button]:active {
+                background-color: #004ec4;
+            }
+            textarea {
+                resize: none;
+                width: 99%;
+            }
+            #diary {
+                border: solid 1px #363636;
+                border-radius: 5px;
+                padding: 0.5em;
+            }
+            #diary_content {
+                border-bottom: solid 1px #363636;
+                width: 100%;
+            }
+            .delete {
+                position: absolute;
+                right: 2em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>日記</h1>
+        <textarea id="text" cols=30 rows=10 placeholder="日記を入力してください..."></textarea>
+        <div id="diary"></div>
+        <br/>
+        <input type="button" value="保存" onclick="save()"/>
+        <script>
+            window.onload = async () => {
+                var diary = await window.terrescot_api.diary({
+                    op: 'load'
+                });
+                console.log(diary);
+                diary.forEach((element, index) => {
+                    var diary_element = document.createElement('div');
+                    diary_element.setAttribute('id','diary_content');
+                    console.log(element);
+                    diary_element.innerHTML = element.content + '<input type="button" value="D"/>';
+                    document.getElementById('diary').appendChild(diary_element);
+
+                    var _diary =  document.getElementById('diary');
+                    console.log(_diary);
+                    var child_diary_count = _diary.childElementCount;
+                    // このforで日記を取得する
+                    for(var i=0; i<child_diary_count; i++) {
+                        var diary_element = _diary.children[i];
+                        var child_diary_element_count = diary_element.childElementCount;
+                        diary_element.children[0].setAttribute('class','delete')
+                        diary_element.children[0].addEventListener('click', () => {
+                            diary_element.children[0].parentElement.remove();
+                            delete_diary(i);
+                        });
+                    }
+                });
+            }
+
+            // 日記を削除
+            async function delete_diary(i) {
+                await window.terrescot_api.diary({
+                    op: 'delete',
+                    start: i - 1
+                });
+            }
+
+            async function save() {
+                await window.terrescot_api.diary({
+                    op: 'write',
+                    content: document.getElementById('text').value,
+                    edited_date: new Date()
+                });
+            };
+        </script>
+    </body>
+</html>
