@@ -538,6 +538,7 @@ electron.ipcMain.handle('diary', (event, data) => {
     });
     diary.set('diary', diary_data);
     console.debug(data);
+    diary_win.webContents.reload();
   }
   else if(data.op == 'delete'){
     diary_data.splice(data.start, 1);
