@@ -18,6 +18,8 @@ switch (platform()) {
         break; 
 }
 
+console.log(config_path)
+
 var config = JSON.parse(fs.readFileSync(config_path, {encoding: 'utf-8'}));
 var URL = `http://localhost:${config.config.port}/soleil_api/run_function`; // 自分の使っているポートを指定
 

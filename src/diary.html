@@ -51,9 +51,11 @@
     <body>
         <h1>日記</h1>
         <textarea id="text" cols=30 rows=10 placeholder="日記を入力してください..."></textarea>
-        <div id="diary"></div>
         <br/>
         <input type="button" value="保存" onclick="save()"/>
+        <br/>
+        <br/>
+        <div id="diary"></div>
         <script>
             window.onload = async () => {
                 var diary = await window.terrescot_api.diary({
@@ -64,7 +66,7 @@
                     var diary_element = document.createElement('div');
                     diary_element.setAttribute('id','diary_content');
                     console.log(element);
-                    diary_element.innerHTML = element.content + '<input type="button" value="D"/>';
+                    diary_element.innerHTML = element.content + '<span>' + '(' + new Date(element.edited_date).getFullYear() + '/' + (new Date(element.edited_date).getMonth() + 1) + '/' + new Date(element.edited_date).getDate() + ' ' + new Date(element.edited_date).getHours() + ':' + new Date(element.edited_date).getMinutes() + ')' + '</span>' + '<input type="button" value="D"/>';
                     document.getElementById('diary').appendChild(diary_element);
 
                     var _diary =  document.getElementById('diary');
@@ -74,8 +76,8 @@
                     for(var i=0; i<child_diary_count; i++) {
                         var diary_element = _diary.children[i];
                         var child_diary_element_count = diary_element.childElementCount;
-                        diary_element.children[0].setAttribute('class','delete')
-                        diary_element.children[0].addEventListener('click', () => {
+                        diary_element.children[1].setAttribute('class','delete')
+                        diary_element.children[1].addEventListener('click', () => {
                             diary_element.children[0].parentElement.remove();
                             delete_diary(i);
                         });
@@ -95,7 +97,8 @@
                 await window.terrescot_api.diary({
                     op: 'write',
                     content: document.getElementById('text').value,
-                    edited_date: new Date()
+                    edited_date: new Date(),
+                    created_date: new Date()
                 });
             };
         </script>

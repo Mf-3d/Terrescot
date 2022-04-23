@@ -534,7 +534,8 @@ electron.ipcMain.handle('diary', (event, data) => {
   if(data.op == 'write'){
     diary_data.push({
       content: data.content,
-      edited_date: data.edited_date
+      edited_date: data.edited_date,
+      created_date: data.created_date
     });
     diary.set('diary', diary_data);
     console.debug(data);
