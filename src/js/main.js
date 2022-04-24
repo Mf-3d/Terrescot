@@ -1,3 +1,7 @@
+import * as THREE from '/three/build/three.module.js';
+import { MMDLoader } from '/three/examples/jsm/loaders/MMDLoader.js';
+import { MMDAnimationHelper } from '/three/examples/jsm/animation/MMDAnimationHelper.js';
+  
 var Pmx = '';
 var settings = '';
 async function setPmx (func) {
@@ -7,7 +11,7 @@ async function setPmx (func) {
   func();
 }
 
-let scene, renderer, camera, mesh, helper;
+let scene, renderer, camera, mesh, helper, ambientLight, light;
 
 let ready = false;
 
@@ -20,8 +24,8 @@ const clock = new THREE.Clock();
 
 
 const MotionObjects = [
-  { id: "loop", VmdClip: null, AudioClip: false }
-  // { id: "kei_voice_010_2", VmdClip: null, AudioClip: true },
+  { id: "loop", VmdClip: null, AudioClip: false },
+  { id: "loop_old", VmdClip: null, AudioClip: false }
 ];
 
 window.onload = () => {
@@ -38,7 +42,7 @@ window.onload = () => {
  * Initialize Three
  * camera and right
  */
-Init = async () => {
+var Init = async () => {
   scene = new THREE.Scene();
   renderer = new THREE.WebGLRenderer({ 
     alpha: true,
@@ -79,16 +83,17 @@ Init = async () => {
   //cameraの作成
   camera = new THREE.PerspectiveCamera(40, windowWidth / windowHeight, 1, 1000);
   camera.position.set(-1, 15, 30);
+  camera.rotation.x = -0.1;
 }
 
 /*
  * Load PMX and VMD and Audio
  */
-LoadModeler = async () => {
-  const loader = new THREE.MMDLoader();
+var LoadModeler = async () => {
+  const loader = new MMDLoader();
 
   //Loading PMX
-  LoadPMX = () => {
+  var LoadPMX = () => {
     return new Promise(resolve => {
       loader.load(Pmx, (object) => {
         mesh = object;
@@ -115,7 +120,7 @@ LoadModeler = async () => {
   }
 
   //Loading VMD
-  LoadVMD = (id) => {
+  var LoadVMD = (id) => {
     return new Promise(resolve => {
       const path = "./vmd/" + id + ".vmd";
       const val = MotionObjects.findIndex(MotionObject => MotionObject.id == id);
@@ -131,7 +136,7 @@ LoadModeler = async () => {
   }
 
   //Load Audio
-  LoadAudio = (id) => {
+  var LoadAudio = (id) => {
     return new Promise(resolve => {
       const path = "./audio/" + id + ".wav";
       const val = MotionObjects.findIndex(MotionObject => MotionObject.id == id);
@@ -171,7 +176,7 @@ LoadModeler = async () => {
  * Start Vmd and Audio.
  * And, Get Vmd Loop Event
  */
-VmdControl = (id, loop) => {
+var VmdControl = (id, loop) => {
   const index = MotionObjects.findIndex(MotionObject => MotionObject.id == id);
 
   // Not Found id
@@ -181,7 +186,7 @@ VmdControl = (id, loop) => {
   }
 
   ready = false;
-  helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
+  helper = new MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
 
   // 
   helper.add(mesh, {
@@ -219,7 +224,7 @@ VmdControl = (id, loop) => {
 /*
  * Loading PMX or VMD or Voice
  */
-onProgress = (xhr) => {
+var onProgress = (xhr) => {
   if (xhr.lengthComputable) {
     const percentComplete = xhr.loaded / xhr.total * 100;
     console.log(Math.round(percentComplete, 2) + '% downloaded');
@@ -229,7 +234,7 @@ onProgress = (xhr) => {
 /* 
  * loading error
  */
-onError = (xhr) => {
+var onError = (xhr) => {
   console.log("ERROR");
 }
 
@@ -249,16 +254,16 @@ function Render () {
 /*
  * Click Event
  */
-PoseClickEvent = (id) => {
+var PoseClickEvent = (id) => {
   switch (id) {
     case 0:
       VmdControl("loop", true);
       break;
 
-    // 朝起動したとき、朝になったとき
-    // case 1:
-    //   VmdControl("morning", false);
-    //   break;
+    // 旧ループモーション
+    case 1:
+      VmdControl("loop_old", true);
+      break;
 
     // case 2:
     //   VmdControl("kei_voice_010_2", false);
@@ -270,6 +275,6 @@ PoseClickEvent = (id) => {
   }
 }
 
-// window.terrescot_api.on('animation', (event, data)=>{
-//   PoseClickEvent(data.animation);
-// });
+window.terrescot_api.on('animation', (event, data)=>{
+  PoseClickEvent(data.animation);
+});

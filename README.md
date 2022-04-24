@@ -4,6 +4,9 @@ Xascotの派生だったり後継だったりします。
 
 余計な部分をなくしたので少し軽くなったかもしれません。 
 
+※なぜかMMDで出力したモーションは私の環境では読み込めません。
+mmd_toolsなどで再出力したら動くのでもし読み込めなかった場合はこの方法を試してみてください。
+
 [Wiki](https://github.com/mf-3d/terrescot/wiki)
 
 [API操作用モジュール](https://github.com/mf-3d/terrescot-control)

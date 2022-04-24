@@ -1,6 +1,9 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
     <head>
-        <meta charset="utf-8" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <style>
             html {
                 overflow-x: hidden;
@@ -49,16 +52,15 @@
         <title>Terrescot</title>
     </head>
     <body>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/build/three.js"></script>
+        <script src="three/build/three.min.js" type="module"></script>
     
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/mmdparser.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r137/examples/jsm/libs/mmdparser.module.js" type="module"></script>
         <script src="https://cdn.jsdelivr.net/npm/ammo.js@0.0.10/ammo.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TGALoader.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/MMDLoader.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDAnimationHelper.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/effects/OutlineEffect.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/CCDIKSolver.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDPhysics.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r107/examples/jsm/loaders/TGALoader.js" type="module"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r107/examples/jsm/loaders/MMDLoader.js" type="module"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r107/examples/jsm/animation/MMDAnimationHelper.js" type="module"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r107/examples/jsm/animation/CCDIKSolver.js" type="module"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r107/examples/jsm/animation/MMDPhysics.js" type="module"></script>
         <div id="three_canvas"></div>
         <footer>
             <!-- <input type="button" onclick="modelVisiblityOff();" id="visible_btn" value="MMDモデル非表示"/>
@@ -74,7 +76,7 @@
             <a href="javascript:read_rss()"><div class="circle3"></div></a>
             <a href="javascript:void(0)" id="void_button"><div class="circle3" style="background: #80ff67;-webkit-app-region: drag;"></div></a>
         </footer>
-        <script src="./js/main.js"></script>
+        <script src="./js/main.js" type="module"></script>
         <script>
             const longPress = {
                 el: '',
