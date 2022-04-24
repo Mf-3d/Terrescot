@@ -8,6 +8,13 @@ const fs = require('fs');
 const schedule = require('node-schedule'); // 定期実行
 // const modules = require('./js/modules');
 
+// 多重起動防止用
+// 順番的にこうかね
+const gotTheLock = electron.app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  electron.app.quit();
+}
+
 // 設定ファイル
 const store = new Store({
   name: 'config'
@@ -190,12 +197,6 @@ app.post('/soleil_api/run_function/', (req, res) => {
 //       file.serve(request, response);
 //   }).resume();
 // }).listen(PORT); // デフォルトのポートは1212、Xascotと被らないように。
-
-// 多重起動防止用
-const gotTheLock = electron.app.requestSingleInstanceLock();
-if (!gotTheLock) {
-  electron.app.quit();
-}
 
 // メインウィンドウ生成
 function nw(){
