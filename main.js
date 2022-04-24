@@ -159,7 +159,7 @@ app.post('/soleil_api/run_function/', (req, res) => {
   // アニメーションを切り替え
   else if(req.body.function == 'animation'){
     win.webContents.send('animation', {
-      animation: req.body.animation || 1
+      animation: req.body.animation
     });
     var result = {
       "name": "terrescot",

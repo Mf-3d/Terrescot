@@ -25,7 +25,8 @@ const clock = new THREE.Clock();
 
 const MotionObjects = [
   { id: "loop", VmdClip: null, AudioClip: false },
-  { id: "loop_old", VmdClip: null, AudioClip: false }
+  { id: "loop_old", VmdClip: null, AudioClip: false },
+  { id: "greeting", VmdClip: null, AudioClip: false }
 ];
 
 window.onload = () => {
@@ -169,7 +170,7 @@ var LoadModeler = async () => {
   }));
 
   //Set VMD on Mesh
-  VmdControl("loop", true);
+  VmdControl("greeting", false);
 }
 
 /*
