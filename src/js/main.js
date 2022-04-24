@@ -266,9 +266,9 @@ var PoseClickEvent = (id) => {
       VmdControl("loop_old", true);
       break;
 
-    // case 2:
-    //   VmdControl("kei_voice_010_2", false);
-    //   break;
+    case 2:
+      VmdControl("greeting", false);
+      break;
 
     default:
       VmdControl("loop", true);

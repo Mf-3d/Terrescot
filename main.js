@@ -66,7 +66,9 @@ var memo = {
   date: store.get('config.memo.date','')
 }
 
-var diary_data = diary.get('diary') || [];
+// 日記の変数
+var diary_data = diary.get('diary', []);
+
 // localhostサーバーの作成
 const app = express();
 
@@ -185,6 +187,20 @@ app.post('/soleil_api/run_function/', (req, res) => {
         "message": "Success!"
       },
       "order_content": req.body
+    }
+    res.header('Content-Type', 'application/json; charset=utf-8');
+    res.send(result);
+  }
+  else if(req.body.function === 'read_text'){
+    win.webContents.send('read_text', req.body.text);
+    var result = {
+      "name": "terrescot",
+      "api": "soleil_api",
+      "api_version": "0.0.1",
+      "result": {
+        "status": 200,
+        "message": "Success!"
+      }
     }
     res.header('Content-Type', 'application/json; charset=utf-8');
     res.send(result);
@@ -575,10 +591,16 @@ var alerm_job_1 = schedule.scheduleJob({
   minute:  00
 }, function () {
   win.webContents.send('alerm', {});
+  win.webContents.send('animation', {
+    animation: 2
+  });
 });
 
 var alerm_job_2 = schedule.scheduleJob({
   minute:  30
 }, function () {
   win.webContents.send('alerm', {});
+  win.webContents.send('animation', {
+    animation: 2
+  });
 });

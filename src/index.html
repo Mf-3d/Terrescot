@@ -8,10 +8,11 @@
             html {
                 overflow-x: hidden;
                 overflow-y: hidden;
-                position: relative;
+                
             }
             footer{
-                bottom: 3em; /*下に固定*/
+                position: absolute;
+                bottom: 7em; /*下に固定*/
                 width: 90%;
                 background-color: rgb(119, 119, 119);
                 text-align: center;
@@ -141,6 +142,13 @@
                 read_rss();
             });
 
+            window.terrescot_api.on('read_text', (event, data)=>{
+                var speechSet = new SpeechSynthesisUtterance();
+                speechSet.text = data;
+                speechSet.lang = 'ja-JP';
+                speechSynthesis.speak(speechSet);
+            });
+
             window.terrescot_api.on('alerm', (event, data)=>{ 
                 alerm();
             });
@@ -148,6 +156,7 @@
             window.addEventListener("keydown", (e)=>{
                 const keycd = e.keyCode;
                 if(event.shiftKey){
+                    // Mキー
                     if(keycd === 77){
                         window.terrescot_api.toggle_memovisiblity({
                             // 表示するか否か デフォルトは切替え
@@ -160,8 +169,16 @@
                             // visible: true
                         });
                     }
+                    // Dキー
                     if(keycd === 68){
                         window.terrescot_api.toggle_diary_winvisiblity({
+                            // 表示するか否か デフォルトは切替え
+                            // visible: true
+                        });
+                    }
+                    // Sキー
+                    if(keycd === 83){
+                        window.terrescot_api.toggle_settingvisiblity({
                             // 表示するか否か デフォルトは切替え
                             // visible: true
                         });
