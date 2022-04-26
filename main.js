@@ -186,8 +186,8 @@ app.post('/soleil_api/run_function/', (req, res) => {
   }
 
   // アラーム
-  else if(req.body.function == 'alerm'){
-    win.webContents.send('alerm', {});
+  else if(req.body.function == 'alarm'){
+    win.webContents.send('alarm', {});
     var result = {
       "name": "terrescot",
       "api": "soleil_api",
