@@ -16,6 +16,7 @@ const fs = require('fs'); // ファイル操作
 
 const app = express();
 
+let port, rss, rss_title_element;
 let wins = {};
 let wins_visible = {};
 
@@ -29,10 +30,10 @@ function win_event(id) {
   // メインウィンドウだったら
   if(id == 'win'){
     wins[id].on('close', async () => {
-      store.set('config.port', PORT);
-      store.set('config.rss', RSS);
-      store.set('config.rss_elements.title', rss_title_element);
-      store.set('config.api.read_rss', api.read_rss);
+      // store.set('config.port', PORT);
+      // store.set('config.rss', RSS);
+      // store.set('config.rss_elements.title', rss_title_element);
+      // store.set('config.api.read_rss', api.read_rss);
     });
   }
   else{
@@ -46,6 +47,7 @@ function win_event(id) {
 module.exports = {
   // サーバーを生成
   nserver: async (routes, PORT, static_routes) => {
+    port = PORT;
     let server = app.listen(PORT, () => {
       console.log("Node.js is listening to PORT:" + server.address().port);
     });
