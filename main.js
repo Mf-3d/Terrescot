@@ -82,7 +82,7 @@ const app = express();
 
 // node-staticのかわり
 app.use(express.static(__dirname + '/src'));
-app.use('/three',express.static(__dirname + '/node_modules/three/'));
+app.use('/three/',express.static(__dirname + '/src/js/three'));
 
 server = app.listen(PORT, function(){
   console.log("Node.js is listening to PORT:" + server.address().port);

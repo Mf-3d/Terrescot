@@ -1,6 +1,6 @@
 {
   "name": "terrescot",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Terre.",
   "main": "main.js",
   "scripts": {
@@ -19,9 +19,11 @@
     "productName": "Terrescot",
     "files": [
       "main.js",
-      "src",
+      "src/",
       "package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "node_modules/",
+      "node_modules/three/examples/"
     ],
     "win": {
       "icon": "src/image/logo.ico",
@@ -39,8 +41,7 @@
     "express": "^4.17.3",
     "node-schedule": "^2.1.0",
     "request": "^2.88.2",
-    "rss-parser": "^3.12.0",
-    "three": "^0.125.0"
+    "rss-parser": "^3.12.0"
   },
   "devDependencies": {
     "electron": "^18.0.3"
