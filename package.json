@@ -1,6 +1,6 @@
 {
   "name": "terrescot",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Terre.",
   "main": "main.js",
   "scripts": {
@@ -43,7 +43,6 @@
     "three": "^0.125.0"
   },
   "devDependencies": {
-    "electron": "^18.0.3",
-    "electron-builder": "^23.0.3"
+    "electron": "^18.0.3"
   }
 }
