@@ -2,7 +2,7 @@
   "name": "terrescot",
   "version": "0.3.1",
   "description": "Terre.",
-  "main": "new_main.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx electron .",
