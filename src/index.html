@@ -149,13 +149,14 @@
                 speechSynthesis.speak(speechSet);
             });
 
-            window.terrescot_api.on('alerm', (event, data)=>{ 
-                alerm();
+            window.terrescot_api.on('alarm', (event, data)=>{ 
+                alarm();
             });
 
             window.addEventListener("keydown", (e)=>{
                 const keycd = e.keyCode;
-                if(event.shiftKey){
+                // Shiftキーが押されているか&その他のキーが押されていないか
+                if(event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey){
                     // Mキー
                     if(keycd === 77){
                         window.terrescot_api.toggle_memovisiblity({
@@ -163,6 +164,7 @@
                             // visible: true
                         });
                     }
+                    // Tキー
                     if(keycd === 84){
                         window.terrescot_api.toggle_test_winvisiblity({
                             // 表示するか否か デフォルトは切替え
@@ -183,11 +185,18 @@
                             // visible: true
                         });
                     }
+                    // Cキー
+                    if(keycd === 67){
+                        window.terrescot_api.toggle_alarm_winvisiblity({
+                            // 表示するか否か デフォルトは切替え
+                            // visible: true
+                        });
+                    }
                 }
             });
 
-            function alerm() {
-                const alerm = new Audio('audio/alerm.mp3');
+            function alarm() {
+                const alerm = new Audio('audio/alarm.mp3');
                 alerm.play();
                 document.getElementById('void_button').click();
             }

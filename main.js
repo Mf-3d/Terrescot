@@ -1,3 +1,9 @@
+////////////////////////////////
+//
+// やっとアラームが追加されるみたい
+//
+////////////////////////////////
+
 // モジュール読み込み
 const electron = require("electron");
 const Store = require('electron-store');
@@ -31,6 +37,7 @@ let swin; // 設定ウィンドウ
 let mwin; // メモウィンドウ
 let test_win; // テスト用ウィンドウ
 let diary_win; // 日記ウィンドウ
+let alarm_win; // アラームウィンドウ
 
 // ウィンドウが開いているかの変数
 let win_visible = false;
@@ -38,6 +45,7 @@ let swin_visible = false;
 let mwin_visible = false;
 let test_win_visible = false;
 let diary_win_visible = false;
+let alarm_win_visible = false;
 
 // ウィンドウのサイズの変数
 let test_win_size;
@@ -176,6 +184,8 @@ app.post('/soleil_api/run_function/', (req, res) => {
     res.header('Content-Type', 'application/json; charset=utf-8');
     res.send(result);
   }
+
+  // アラーム
   else if(req.body.function == 'alerm'){
     win.webContents.send('alerm', {});
     var result = {
@@ -191,6 +201,8 @@ app.post('/soleil_api/run_function/', (req, res) => {
     res.header('Content-Type', 'application/json; charset=utf-8');
     res.send(result);
   }
+
+  // テキスト読み上げ
   else if(req.body.function === 'read_text'){
     win.webContents.send('read_text', req.body.text);
     var result = {
@@ -388,6 +400,34 @@ function diary_nw() {
   });
 }
 
+// テスト用ウィンドウ生成
+function alarm_nw() {
+  alarm_win = new electron.BrowserWindow({
+    resizable: true,
+    hasShadow:  true,
+    width: 400,
+    height: 300,
+    transparent: false,
+    frame: true,
+    toolbar: false,
+    alwaysOnTop: false,
+    icon: `${__dirname}/icon.png`,
+    webPreferences: {
+      preload: `${__dirname}/src/preload/preload.js`
+    }
+  });
+
+  alarm_win.webContents.loadURL(`http://localhost:${store.get(`config.port`)}/alarm.html`);
+  alarm_win.webContents.reloadIgnoringCache();
+
+  // 設定ウィンドウが起動したことを知らせる
+  alarm_win_visible = true;
+
+  alarm_win.on('close',() => {
+    alarm_win_visible = false;
+  });
+}
+
 // macOS以外はウィンドウをすべて閉じたらアプリを終了するように
 electron.app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
@@ -545,6 +585,7 @@ electron.ipcMain.handle('toggle_diary_winvisiblity', (event, data) => {
     }
   }
 });
+
 // 日記読み込み、保存用
 electron.ipcMain.handle('diary', (event, data) => {
   console.debug(data);
@@ -566,7 +607,63 @@ electron.ipcMain.handle('diary', (event, data) => {
   }
   // 日記を読み込むとき
   else if(data.op == 'load'){
-    return store.get('diary', diary_data);
+    return diary.get('diary', diary_data);
+  }
+});
+
+// アラームウィンドウの起動
+electron.ipcMain.handle('toggle_alarm_winvisiblity', (event, data) => {
+  if(data.visible === true){
+    // 表示させたいとき
+    alarm_nw();
+  }
+  else if(data.visible === false){
+    // 非表示にさせたいとき
+    alarm_win.close();
+    alarm_win_visible = false;
+  }
+  else{
+    // 切替するとき
+    if(alarm_win_visible === false){
+      alarm_nw();
+    }
+    else if(alarm_win_visible === true){
+      alarm_win.close();
+      alarm_win_visible = false;
+    }
+  }
+});
+
+// アラーム読み込み、保存用
+electron.ipcMain.handle('op_alarm', (event, data) => {
+  console.debug(data);
+  // アラームを保存するとき
+  if(data.op == 'write'){
+    let export_data = [data.content[0],data.content[1]]
+    store.set('config.alarm', export_data);
+    console.debug(data);
+    alarm_win.webContents.reload();
+    alarm_job_1.cancel();
+    alarm_job_1 = schedule.scheduleJob({
+      hour: store.get('config.alarm')[0],
+      minute: store.get('config.alarm')[1]
+    }, function () {
+      win.webContents.send('alarm', {});
+      win.webContents.send('animation', {
+        animation: 2
+      });
+    });
+  }
+  else if(data.op == 'delete'){
+    store.set('config.alarm', undefined);
+    console.debug(data);
+    alarm_job_1.cancel();
+    alarm_win.webContents.reload();
+  }
+  // アラームを読み込むとき
+  else if(data.op == 'load'){
+    console.debug(store.get('config.alarm'));
+    return store.get('config.alarm', [7,0]);
   }
 });
 
@@ -585,21 +682,32 @@ function get_rss(){
 }
 
 // -----------------------------
-// アラーム設定
+// 時計設定
 // -----------------------------
-var alerm_job_1 = schedule.scheduleJob({
+var clock_job_1 = schedule.scheduleJob({
   minute:  00
 }, function () {
-  win.webContents.send('alerm', {});
+  win.webContents.send('alarm', {});
   win.webContents.send('animation', {
     animation: 2
   });
 });
 
-var alerm_job_2 = schedule.scheduleJob({
+var clock_job_2 = schedule.scheduleJob({
   minute:  30
 }, function () {
-  win.webContents.send('alerm', {});
+  win.webContents.send('alarm', {});
+  win.webContents.send('animation', {
+    animation: 2
+  });
+});
+
+// アラーム
+var alarm_job_1 = schedule.scheduleJob({
+  hour: store.get('config.alarm')[0],
+  minute: store.get('config.alarm')[1]
+}, function () {
+  win.webContents.send('alarm', {});
   win.webContents.send('animation', {
     animation: 2
   });

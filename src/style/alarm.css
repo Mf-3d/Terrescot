@@ -1,0 +1,63 @@
+.c-clock {
+  position: relative;
+  width: 175px;
+  height: 175px;
+  border: 1px solid #333;
+  border-radius: 50%;
+
+}
+.c-clock__hour {
+  position: absolute;
+  top: calc(50% - 60px);
+  left: calc(50% - 5px);
+  width: 4px;
+  height: 60px;
+  background: #333;
+  transform-origin: bottom;
+}
+.c-clock__min {
+  position: absolute;
+  top: calc(50% - 80px);
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 80px;
+  background: #333;
+  transform-origin: bottom;
+}
+.c-clock__sec {
+  position: absolute;
+  top: calc(50% - 80px);
+  left: calc(50% - 1px);
+  width: 4px;
+  height: 80px;
+  background: #ff0000;
+  transform-origin: bottom;
+}
+.c-clock__12 {
+  position: absolute;
+  top: 10px;
+  left: calc(50%);
+  transform: translateX(-50%);
+  font-size: 25px;
+}
+.c-clock__3 {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 25px;
+}
+.c-clock__6 {
+  position: absolute;
+  bottom: 10px;
+  left: calc(50%);
+  transform: translateX(-50%);
+  font-size: 25px;
+}
+.c-clock__9 {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 25px;
+}
