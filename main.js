@@ -77,21 +77,21 @@ let mwin = {
 };
 
 // テスト用ウィンドウ
-let test_win = {
-  name: 'test_win',
-  resizable: true,
-  hasShadow:  true,
-  width: 300,
-  height: 300,
-  transparent: false,
-  frame: true,
-  toolbar: false,
-  alwaysOnTop: false,
-  icon: `${__dirname}/icon.png`,
-  webPreferences: {
-    preload: `${__dirname}/src/preload/preload.js`
-  }
-};
+// let test_win = {
+//   name: 'test_win',
+//   resizable: true,
+//   hasShadow:  true,
+//   width: 300,
+//   height: 300,
+//   transparent: false,
+//   frame: true,
+//   toolbar: false,
+//   alwaysOnTop: false,
+//   icon: `${__dirname}/icon.png`,
+//   webPreferences: {
+//     preload: `${__dirname}/src/preload/preload.js`
+//   }
+// };
 
 // 日記ウィンドウ
 let diary_win = {
@@ -477,25 +477,25 @@ function setIPC() {
 
   // テストウィンドウの起動
   main.receive('toggle_test_winvisiblity', (event, data) => {
-    if(data.visible === true){
-      // 表示させたいとき
-      main.nw(mwin, mwin_size, {Url: `http://localhost:${store.get(`config.port`)}/memo.html`});
-    }
-    else if(data.visible === false){
-      // 非表示にさせたいとき
-      main.close(test_win.name);
-      test_win_visible = false;
-    }
-    else{
-      // 切替するとき
-      if(test_win_visible === false){
-        main.nw(mwin, mwin_size, {Url: `http://localhost:${store.get(`config.port`)}/memo.html`});
-      }
-      else if(test_win_visible === true){
-        main.close(test_win.name);
-        test_win_visible = false;
-      }
-    }
+    // if(data.visible === true){
+    //   // 表示させたいとき
+    //   main.nw(mwin, mwin_size, {Url: `http://localhost:${store.get(`config.port`)}/memo.html`});
+    // }
+    // else if(data.visible === false){
+    //   // 非表示にさせたいとき
+    //   main.close(test_win.name);
+    //   test_win_visible = false;
+    // }
+    // else{
+    //   // 切替するとき
+    //   if(test_win_visible === false){
+    //     main.nw(mwin, mwin_size, {Url: `http://localhost:${store.get(`config.port`)}/memo.html`});
+    //   }
+    //   else if(test_win_visible === true){
+    //     main.close(test_win.name);
+    //     test_win_visible = false;
+    //   }
+    // }
   });
 
   // 日記ウィンドウを起動
