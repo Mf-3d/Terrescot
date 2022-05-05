@@ -230,6 +230,7 @@ let route = [
         "name": "terrescot",
         "api": "soleil_api",
         "api_version": "0.0.1",
+        "app_version": "0.5.0",
         "result": {
           "status": 200,
           "message": "Success!"
@@ -245,6 +246,7 @@ let route = [
         "name": "terrescot",
         "api": "soleil_api",
         "api_version": "0.0.1",
+        "app_version": "0.5.0",
         "result": {
           "status": 200,
           "message": "Success!"
