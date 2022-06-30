@@ -1,6 +1,6 @@
 {
   "name": "terrescot",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "description": "Terre.",
   "main": "main.js",
   "scripts": {
