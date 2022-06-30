@@ -25,6 +25,7 @@
     "productName": "Terrescot",
     "files": [
       "main.js",
+      "process.js",
       "src/",
       "package.json",
       "package-lock.json",
